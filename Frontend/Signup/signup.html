@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expanse Tracker</title>
+    <link rel="stylesheet" href="./../css/index.css" />
+  </head>
+  <body>
+    <div class="container">
+      <form onsubmit="showHandler(event)" class="form">
+        <!-- <div class="form"> -->
+        <h1>Registration</h1>
+        <p id="error"></p>
+        <div class="flexchild">
+          <label for="name">Name:-</label>
+          <input type="text" id="name" name="name" required />
+        </div>
+        <div class="flexchild">
+          <label for="email">Email:-</label>
+          <input type="text" id="email" name="email" required />
+        </div>
+        <div class="flexchild">
+          <label for="password">Password:-</label>
+          <input type="text" id="password" name="password" required />
+        </div>
+        <div class="flexchild">
+          <label for="phone">Phone No:-</label>
+          <input type="text" id="phone" name="phone" required />
+        </div>
+        <div class="flexchild">
+          <button type="submit" id="signup">SignUp</button>
+        </div>
+        <div>
+          <p>
+            Existing user ?
+            <a href="http://127.0.0.1:3000/Login/login.html">LogIn</a>
+          </p>
+        </div>
+        <!-- </div> -->
+      </form>
+    </div>
+  </body>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"
+    integrity="sha512-LUKzDoJKOLqnxGWWIBM4lzRBlxcva2ZTztO8bTcWPmDSpkErWx0bSP4pdsjNH8kiHAUPaT06UXcb+vOEZH+HpQ=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+  <script src="signup.js"></script>
+</html>
