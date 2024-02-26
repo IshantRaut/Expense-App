@@ -21,8 +21,10 @@ const usersTable= require('../Expense-App/models/user');
 
 //routes
 const userRoutes = require('../Expense-App/routes/userRoutes');
+const expenseRoutes = require('../Expense-App/routes/expense');
 
 app.use(userRoutes);
+app.use(expenseRoutes);
 
 sequelize.sync( ) 
 .then(result=>{
