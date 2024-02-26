@@ -18,13 +18,17 @@ app.use(helmet());
 
 //Tables
 const usersTable= require('../Expense-App/models/user');
-
+const expenseTable = require('../Expense-App/models/expense');
 //routes
 const userRoutes = require('../Expense-App/routes/userRoutes');
 const expenseRoutes = require('../Expense-App/routes/expense');
 
 app.use(userRoutes);
 app.use(expenseRoutes);
+
+
+usersTable.hasMany(expenseTable);
+expenseTable.belongsTo(usersTable);
 
 sequelize.sync( ) 
 .then(result=>{

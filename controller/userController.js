@@ -1,6 +1,13 @@
 const Users = require("../models/user");
 const bcrypt = require('bcrypt');
 
+const jwt = require('jsonwebtoken');
+
+function accessToken(id,name){
+    return jwt.sign({userId:id, name : name},'g98yigujkggggu98gyu');
+
+}
+
 exports.postAddUsers= (req,res,next)=>{
     let password = req.body.password;
     bcrypt.hash(password, 10).then( async (hash)=> {

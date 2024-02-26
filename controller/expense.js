@@ -6,7 +6,8 @@ exports.postAddExpense=async (req,res,next)=>{
  await Expense.create({
     amount:req.body.amount,
     description:req.body.description,
-    category: req.body.category
+    category: req.body.category,
+    userId:req.body.userId
  })
  .then(result=> res.json(result.dataValues.id))
  .catch(err => console.log(err));
@@ -15,6 +16,7 @@ exports.postAddExpense=async (req,res,next)=>{
 
 exports.getDeleteExpense=async(req,res,next)=>{
     const id = req.params.id;
+    console.log('controllers_expense = ' +id)
     Expense.findByPk(id)
     .then(data=>{
         data.destroy();
