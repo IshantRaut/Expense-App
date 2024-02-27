@@ -17,18 +17,24 @@ app.use(bodyParser.json());
 app.use(helmet());
 
 //Tables
-const usersTable= require('../Expense-App/models/user');
-const expenseTable = require('../Expense-App/models/expense');
+const usersTable= require('./models/user');
+const expenseTable = require('./models/expense');
+const orderTable=require('./models/order');
 //routes
-const userRoutes = require('../Expense-App/routes/userRoutes');
-const expenseRoutes = require('../Expense-App/routes/expense');
+const userRoutes = require('./routes/userRoutes');
+const expenseRoutes = require('./routes/expense');
+const purchaseRoutes = require('./routes/purchase');
+
 
 app.use(userRoutes);
 app.use(expenseRoutes);
+app.use('/purchase',purchaseRoutes);
 
 
 usersTable.hasMany(expenseTable);
 expenseTable.belongsTo(usersTable);
+usersTable.hasMany(orderTable);
+orderTable.belongsTo(usersTable);
 
 sequelize.sync( ) 
 .then(result=>{
