@@ -47,6 +47,8 @@ exports.checkOut = async(req,res)=>{
     //we always update the last transaction done by user, i.e why first we order the data in desc order
     const order = await Order.findOne({order: [[ 'id', 'DESC' ]]},{where:{userId:userId}}); 
 
+
+    //PRomise should be return using promis.all metyhods
     const promise1 = Order.update({paymentid: payment_id, status:status},{where:{id:order.id}});
     const promise2 = Users.update({isPremium:premiumStatus},{where:{id:userId}});
 
