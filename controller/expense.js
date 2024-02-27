@@ -1,4 +1,5 @@
 const expense = require('../models/expenses');
+const Expense = require('../models/expense');
 const Expense = require('../models/expenses');
 const User = require('../models/users')
 
@@ -23,7 +24,14 @@ exports.getDeleteExpense=async(req,res,next)=>{
         res.json(data);
     })
 }
+exports.checkMembership = async(req,res,next)=>{
+    const userId = req.body.userId
 
+    User.findOne({where:{id:userId}})
+    .then(data=>{
+        res.json({premium:data.isPremium})
+    });
+} 
 
 exports.getAllData = async(req,res,next)=>{
     const userId = req.body.userId

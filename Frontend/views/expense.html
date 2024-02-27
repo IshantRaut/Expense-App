@@ -15,6 +15,49 @@
 <body background="/bg.jpg" style="background-repeat: no-repeat; background-size: cover;">
     <br>
     <div class="container w-50 flex-column  bg-light rounded-4" style="height: 50%;">
+        <div class="main_container">
+            <!-- table content -->
+            <div class="data_container" style="display: block;">
+                <div style="text-align: center; margin-bottom: 20px;"><h1>Expenses</h1></div>
+                <table class="table table-hover" >
+                    <thead>
+                      <tr>
+                        <th scope="col">Category</th>
+                        <th scope="col">Description</th>
+                        <th scope="col" style="text-align: right;">Amount</th>
+                        <th scope="col" style="text-align: center;">Edit/Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody id="display" >
+
+                    </tbody>
+                  </table>
+
+            </div>
+
+            <div class="leaderboard" style="display: none;">
+                <div style="text-align: center; margin-bottom: 20px;"><h1>Leaderboard</h1></div>
+
+                <table class="table table-hover" >
+                    <thead>
+                      <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody id="ldrboard_table" >
+
+                    </tbody>
+                  </table>
+            </div>
+
+
+         <!-- expense entry container    -->
+        <div class="add_expense_container flex-column  bg-light" >
+
+            <button id="rzp-button1" style="visibility: hidden;">Pay</button>
+            <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+            <p id="premium" style="visibility: hidden;">You are a premium user</p>
         <form class="a  d-flex flex-column " method="POST">
 
                 <!--  input should be before the label -->
@@ -41,12 +84,15 @@
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
         <div id="display" class="container-fluid align-items-center p-3">
-            <ul id="ul"> </ul>
+            <button id="ldrboard"style="visibility: hidden;">Leaderboard</button>
+            <!-- <div id="display" class="container-fluid align-items-center p-3">
+                <ul id="ul"> </ul>
+            </div>
+            </div> -->
         </div>
     </div>
 </body>
-
-<script src="../Frontend/js/expense.js"></script>
+<script src="../js//expense.js"></script>
 
 
 </html>

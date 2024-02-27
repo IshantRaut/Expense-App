@@ -20,16 +20,17 @@ app.use(helmet());
 const usersTable= require('./models/user');
 const expenseTable = require('./models/expense');
 const orderTable=require('./models/order');
+
 //routes
 const userRoutes = require('./routes/userRoutes');
 const expenseRoutes = require('./routes/expense');
 const purchaseRoutes = require('./routes/purchase');
-
+const premium = require('./routes/premium');
 
 app.use(userRoutes);
 app.use(expenseRoutes);
 app.use('/purchase',purchaseRoutes);
-
+app.use('/premium',premium);
 
 usersTable.hasMany(expenseTable);
 expenseTable.belongsTo(usersTable);
