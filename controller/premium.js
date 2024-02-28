@@ -6,9 +6,11 @@ exports.leaderboard = (req,res,next)=>{
         //inserting Expense table in to Users table
         include:{
             model:Expense,
-            group:User.name
+            group:User.name,
+            attributes:['amount'],
      }})
     .then(data => {
+        console.log(JSON.stringify(data));
         let result=[];
         data.forEach(element => {
             let sum=0;

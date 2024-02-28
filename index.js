@@ -26,11 +26,14 @@ const userRoutes = require('./routes/userRoutes');
 const expenseRoutes = require('./routes/expense');
 const purchaseRoutes = require('./routes/purchase');
 const premium = require('./routes/premium');
+const passwordReset = require('./routes/password');
 
 app.use(userRoutes);
 app.use(expenseRoutes);
 app.use('/purchase',purchaseRoutes);
 app.use('/premium',premium);
+app.use('/password',passwordReset);
+
 
 usersTable.hasMany(expenseTable);
 expenseTable.belongsTo(usersTable);
