@@ -20,6 +20,7 @@ app.use(helmet());
 const usersTable= require('./models/user');
 const expenseTable = require('./models/expense');
 const orderTable=require('./models/order');
+const passwordRequestTable=require('./models/forgotPasswordReq');
 
 //routes
 const userRoutes = require('./routes/userRoutes');
@@ -39,6 +40,9 @@ usersTable.hasMany(expenseTable);
 expenseTable.belongsTo(usersTable);
 usersTable.hasMany(orderTable);
 orderTable.belongsTo(usersTable);
+
+usersTable.hasMany(passwordRequestTable);
+passwordRequestTable.belongsTo(usersTable);
 
 sequelize.sync( ) 
 .then(result=>{
