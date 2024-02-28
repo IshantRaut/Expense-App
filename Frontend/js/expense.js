@@ -22,6 +22,7 @@ window.addEventListener('DOMContentLoaded',async ()=>{
                 document.getElementById('premium').style.visibility='visible'
                 document.getElementById('ldrboard').style.visibility = 'visible'
 
+                document.getElementById('download').style.visibility='visible'
                 leaderboardApiCall();
             }
             else{ document.getElementById('rzp-button1').style.visibility='visible'}
