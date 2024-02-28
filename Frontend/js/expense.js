@@ -74,6 +74,19 @@ function showLeaderboard(e){
     }
 
    }
+   //pagination
+function activeLink(){
+    let page = document.getElementsByClassName('page-link');
+    let currentValue = 1
+    console.log(page);
+    for(index of page){
+        index.classList.remove('active');
+    }
+
+    event.target.classList.add('active');
+    currentValue = event.target.value;  
+}
+
 //razor pay integeration
 document.getElementById('rzp-button1').onclick = async function(e){
     let flag=false;

@@ -35,6 +35,20 @@
 
             </div>
 
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                  <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" onclick="backBtn()">Previous</a>
+                  </li>
+                  <li class="page-item " onclick="activeLink()"><a class="page-link active " href="#" value="1">1</a></li>
+                  <li class="page-item" onclick="activeLink()"><a class="page-link" href="#" value="2">2</a></li>
+                  <li class="page-item" onclick="activeLink()"><a class="page-link" href="#" value="3">3</a></li>
+                    <a class="page-link" href="#" onclick="nxtBtn()">Next</a>
+                  </li>
+                </ul>
+              </nav>
+
+
             <div class="leaderboard" style="display: none;">
                 <div style="text-align: center; margin-bottom: 20px;"><h1>Leaderboard</h1></div>
 
