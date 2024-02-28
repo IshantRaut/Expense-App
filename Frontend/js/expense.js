@@ -4,6 +4,7 @@ var category = document.getElementById('category');
 let btn = document.getElementById('submit');
 let display = document.getElementById('display');
 let ldrBoard = document.getElementById('ldrboard');
+let download = document.getElementById('download');
 
 const token = localStorage.getItem('token')
 
@@ -40,6 +41,12 @@ window.addEventListener('DOMContentLoaded',async ()=>{
         console.log(err)
     }
 })
+
+download.addEventListener('click',downloadReport);
+async function downloadReport(){
+let users= await axios.get('http://localhost:3000/downloadexpense',{headers:{"Authorization":token}})
+window.location.replace(users.data.fileURL);
+}
 
 async function leaderboardApiCall(){
     let users= await axios.get('http://localhost:3000/premium/leaderboard',{headers:{"Authorization":token}})
@@ -93,7 +100,8 @@ document.getElementById('rzp-button1').onclick = async function(e){
 
         document.getElementById('rzp-button1').style.visibility='hidden';
         document.getElementById('premium').style.visibility='visible';
-        document.getElementById('ldrboard').style.visibility = 'visible'
+        document.getElementById('ldrboard').style.visibility = 'visible';
+        document.getElementById('download').style.visibility='visible';
 
         alert("You are a premium user now")
         },

@@ -21,6 +21,7 @@ const usersTable= require('./models/user');
 const expenseTable = require('./models/expense');
 const orderTable=require('./models/order');
 const passwordRequestTable=require('./models/forgotPasswordReq');
+const downloadTable = require('./models/download');
 
 //routes
 const userRoutes = require('./routes/userRoutes');
@@ -43,7 +44,8 @@ orderTable.belongsTo(usersTable);
 
 usersTable.hasMany(passwordRequestTable);
 passwordRequestTable.belongsTo(usersTable);
-
+usersTable.hasMany(downloadTable);
+downloadTable.belongsTo(usersTable);
 sequelize.sync( ) 
 .then(result=>{
 
