@@ -24,6 +24,10 @@ const users = sequelize.define('users',{
     isPremium:{
         type:Sequelize.BOOLEAN,
         defaultValue: false,
+    },
+    rowPreference:{
+        type:Sequelize.INTEGER,
+        defaultValue:5
     }
 })
 

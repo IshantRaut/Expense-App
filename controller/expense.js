@@ -64,7 +64,17 @@ exports.checkMembership = async(req,res,next)=>{
 exports.getAllData = async(req,res,next)=>{
     const userId = req.body.userId
     Expense.findAll({where:{userId:userId}})
-    .then(data=>{
-        res.json(data)
+    .then(async data=>{
+        const user = await User.findByPk(userId);
+        res.json({premium:data.isPremium,rowPreference:user.rowPreference})
     });
+}
+
+exports.updateRowPreference = async(req,res,next)=>{
+    const userId = req.body.userId;
+    console.log(req.params.rows);
+    const user = await User.findByPk(userId);
+    user.update({rowPreference:req.params.rows});
+
+    res.send('row preference saved');
 }

@@ -1,89 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
 
+<head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    
     <title>Document</title>
+
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.1/axios.min.js"></script>
+    <link rel="stylesheet" href="./expense.css">
 </head>
+
 <body background="/bg.jpg" style="background-repeat: no-repeat; background-size: cover;">
-    <br>
-    <div class="container w-50 flex-column  bg-light rounded-4" style="height: 50%;">
-        <div class="main_container">
-            <!-- table content -->
-            <div class="data_container" style="display: block;">
-                <div style="text-align: center; margin-bottom: 20px;"><h1>Expenses</h1></div>
-                <table class="table table-hover" >
-                    <thead>
-                      <tr>
-                        <th scope="col">Category</th>
-                        <th scope="col">Description</th>
-                        <th scope="col" style="text-align: right;">Amount</th>
-                        <th scope="col" style="text-align: center;">Edit/Delete</th>
-                      </tr>
-                    </thead>
-                    <tbody id="display" >
 
-                    </tbody>
-                  </table>
+    <div class="main_container">
+        <div class="data_container" style="display: block;">
+          <!-- expense div -->
+            <div style="text-align: center; margin-bottom: 20px;"><h1>Expenses</h1></div>
 
-            </div>
+           <!-- expense table  -->
+          <div style="overflow:auto; height:75%;">
+            <table class="table table-hover" >
+                <thead>
+                  <tr>
+                    <th scope="col">Category</th>
+                    <th scope="col">Description</th>
+                    <th scope="col" style="text-align: right;">Amount</th>
+                    <th scope="col" style="text-align: center;">Edit/Delete</th>
+                  </tr>
+                </thead>
+                <tbody id="display" >
+         
+                </tbody>
+              </table>
+          </div> 
+              
+              <nav aria-label="Page navigation example" style="margin-top: 15px;">
+                <ul class="pagination justify-content-center" id="paginationUl">
 
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-center">
-                  <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1" onclick="backBtn()">Previous</a>
-                  </li>
-                  <li class="page-item " onclick="activeLink()"><a class="page-link active " href="#" value="1">1</a></li>
-                  <li class="page-item" onclick="activeLink()"><a class="page-link" href="#" value="2">2</a></li>
-                  <li class="page-item" onclick="activeLink()"><a class="page-link" href="#" value="3">3</a></li>
-                    <a class="page-link" href="#" onclick="nxtBtn()">Next</a>
+                  <li class="page-item" onclick="activeLink(1)" value="1"><a class="page-link active " href="#" >1</a></li>                                                  
+
                   </li>
                 </ul>
-              </nav>
+              </nav> 
+
+              <div style="display: flex;justify-content: center;">
+                <span>Rows per page</span>
+                <select class="form-select-md ms-2" aria-label="Default select example" style="width: 65px;" id="select">
+                  <option value="5" onclick="rowsInPage(5)">5</option>
+                  <option value="10" onclick="rowsInPage(10)">10</option>
+                  <option value="25" onclick="rowsInPage(25)">25</option>
+                  <option value="50" onclick="rowsInPage(50)">50</option>
+                  <option value="100" onclick="rowsInPage(100)">100</option>
+                </select>
+              </div>
+            
+
+        </div>
+       
+        <!-- leaderboard div -->
+        <div class="leaderboard" style="display: none;">
+            <div style="text-align: center; margin-bottom: 20px;"><h1>Leaderboard</h1></div>
+
+            <table class="table table-hover" >
+                <thead>
+                  <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Total</th>
+                  </tr>
+                </thead>
+                <tbody id="ldrboard_table" >
+         
+                </tbody>
+              </table>
+
+            
+ 
+        </div>
 
 
-            <div class="leaderboard" style="display: none;">
-                <div style="text-align: center; margin-bottom: 20px;"><h1>Leaderboard</h1></div>
+     <!-- expense entry container    -->
+    <div class="add_expense_container flex-column  bg-light" >
 
-                <table class="table table-hover" >
-                    <thead>
-                      <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">Total</th>
-                      </tr>
-                    </thead>
-                    <tbody id="ldrboard_table" >
+         <!-- buy premium button -->
+        <button id="rzp-button1" style="visibility: hidden;">Pay</button>
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-                    </tbody>
-                  </table>
-            </div>
+        <p id="premium" style="visibility: hidden;">You are a premium user</p>
 
 
-         <!-- expense entry container    -->
-        <div class="add_expense_container flex-column  bg-light" >
-
-            <button id="rzp-button1" style="visibility: hidden;">Pay</button>
-            <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-            <p id="premium" style="visibility: hidden;">You are a premium user</p>
         <form class="a  d-flex flex-column " method="POST">
-
+           
                 <!--  input should be before the label -->
                 <div class="form-floating w-50 align-self-center mb-4 mt-4">
                     <input class="form-control " type="number" id="amt" placeholder="Enter amount" required>
                     <label class="form-label">Enter amount</label>
                 </div>
+                
 
                 <div class="form-floating w-50 align-self-center mb-4">
                     <input class="form-control" type="text" id="desc" placeholder="Choose description" required>
                     <label class="form-label">Choose description</label>
                 </div>
+                
 
                 <label class="form-label align-self-center">Choose Category</label>
                 <select class="form-select w-50 align-self-center" id="category" required>
@@ -92,23 +115,18 @@
                     <option id="electricity">electricity</option>
                     <option id="movies">movies</option>
                 </select>
+
                <button class="btn btn-secondary w-25 align-self-center mb-4 mt-3" type="submit" id="submit">add expense</button><br>
         </form>
-        <button id="rzp-button1">Pay</button>
-        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+ 
+      <button id="ldrboard" style="visibility: hidden;">Leaderboard</button>
+      <button id="download" style="visibility:hidden;">Download report</button>
 
-        <div id="display" class="container-fluid align-items-center p-3">
-            <button id="ldrboard"style="visibility: hidden;">Leaderboard</button>
-            <!-- <div id="display" class="container-fluid align-items-center p-3">
-                <ul id="ul"> </ul>
-            </div>
-            </div> -->
-            <button id="ldrboard" style="visibility: hidden;">Leaderboard</button>
-            <button id="download" style="visibility:hidden;">Download report</button>
-        </div>
     </div>
+</div>
 </body>
-<script src="../js//expense.js"></script>
+
+<script src="../js/expense.js"></script>
 
 
 </html>

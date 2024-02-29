@@ -6,41 +6,96 @@ let display = document.getElementById('display');
 let ldrBoard = document.getElementById('ldrboard');
 let download = document.getElementById('download');
 
-const token = localStorage.getItem('token')
+var currPage = 0;
+var rowsPerPage = 0;
 
+const token = localStorage.getItem('token');
 btn.addEventListener('click', addExpense);
 ldrBoard.addEventListener('click',showLeaderboard);
 
+async function rowsInPage(rows){
+   await axios.get(`http://localhost:3000/updaterow/${rows}`,{headers:{"Authorization":token}});
+   location.reload();
+}
 
 window.addEventListener('DOMContentLoaded',async ()=>{
     try{
-        const token = localStorage.getItem('token')
-        const res  = await axios.get('http://localhost:3000/data',{headers:{"Authorization":token}});
-
-        axios.get('http://localhost:3000/membership',{headers:{"Authorization":token}}).then(res=>{
+        const res  = await axios.get('http://localhost:3000/data',{headers:{"Authorization":token}})
+        
+        await axios.get('http://localhost:3000/membership',{headers:{"Authorization":token}}).then(res=>{
+      
+            localStorage.setItem("noOfPages",res.data.rowPreference)//store the rowPreference in local storage
+            rowsPerPage = localStorage.getItem("noOfPages");
 
             if(res.data.premium == true ){
                 document.getElementById('premium').style.visibility='visible'
                 document.getElementById('ldrboard').style.visibility = 'visible'
-
                 document.getElementById('download').style.visibility='visible'
+
                 leaderboardApiCall();
             }
             else{ document.getElementById('rzp-button1').style.visibility='visible'}
         }) 
+        document.getElementById('select').value = rowsPerPage
 
-        for (let i = 0; i < res.data.length; i++) {
-            let id = res.data[i].id;
-            let exp = `${res.data[i].amount}-${res.data[i].description}-${res.data[i].category}`;
-            displayOnScreen(id, exp)
-            displayOnExpense(id, res.data[i]);
+        //initial pagination when page load
+        let pages = await paginate(res.data , rowsPerPage);
+        let page =  pages[currPage];
+
+        for(let i = 2;i<=pages.length;i++ ){
+            let parent = document.getElementById('paginationUl');
+            parent.innerHTML = parent.innerHTML+(` <li class="page-item" onclick="activeLink(${i})" value="${i}"><a class="page-link" href="#" >${i}</a></li>  `)
         }
 
+        for (let i = 0; i < page.length; i++) {
+            let id = page[i].id;
+            displayOnExpense(id, page[i]);
+        }
     }
+    
     catch(err){
         console.log(err)
     }
 })
+
+
+   //when user clicks on different page number
+   async function activeLink(currPage){
+    let pageTab = document.getElementsByClassName('page-link');
+    for(index of pageTab){
+        index.classList.remove('active');
+    }
+
+    event.target.classList.add('active'); 
+
+    const res  = await axios.get('http://localhost:3000/data',{headers:{"Authorization":token}});
+    let pages = await paginate(res.data , rowsPerPage);
+    currPage = currPage-1;
+    let page =  pages[currPage];
+    
+    //display rows acc. to the "rows per page" and "page number"
+    document.getElementById('display').innerHTML = ""; 
+    for (let i = 0; i < page.length; i++) {
+        let id = page[i].id;
+        displayOnExpense(id, page[i]);
+    }
+}
+
+
+//It will give the array of pages according to the "rows per page"
+function  paginate(arr,size){
+    return new Promise((resolve,reject)=>{
+       const d =  arr.reduce((acc, val, i)=>{
+            let idx = Math.floor(i/size);
+            let page = acc[idx] || (acc[idx]=[])
+            page.push(val);
+            return acc;
+        },[])
+
+        resolve(d);
+    })
+}
+
 
 download.addEventListener('click',downloadReport);
 async function downloadReport(){
@@ -48,20 +103,18 @@ let users= await axios.get('http://localhost:3000/downloadexpense',{headers:{"Au
 window.location.replace(users.data.fileURL);
 }
 
+
 async function leaderboardApiCall(){
     let users= await axios.get('http://localhost:3000/premium/leaderboard',{headers:{"Authorization":token}})
-
+   
     users.data.forEach(element => {
        displayOnLeaderBoard(element)
     });
 }
 
 
-
-
 function showLeaderboard(e){
     e.preventDefault();
-
     //if expense is visible then hide it and display leaderboard
     if( document.getElementsByClassName('data_container')[0].style.display=='block'){
         document.getElementsByClassName('data_container')[0].style.display='none';
@@ -74,24 +127,12 @@ function showLeaderboard(e){
     }
 
    }
-   //pagination
-function activeLink(){
-    let page = document.getElementsByClassName('page-link');
-    let currentValue = 1
-    console.log(page);
-    for(index of page){
-        index.classList.remove('active');
-    }
 
-    event.target.classList.add('active');
-    currentValue = event.target.value;  
-}
 
 //razor pay integeration
 document.getElementById('rzp-button1').onclick = async function(e){
-    let flag=false;
-    const token = localStorage.getItem('token')
     const response = await axios.get('http://localhost:3000/purchase/createorder',{headers:{"Authorization":token}});
+
     var options = {
         "key": response.data.key_id,
         "order_id": response.data.orderid, 
@@ -113,12 +154,13 @@ document.getElementById('rzp-button1').onclick = async function(e){
 
         document.getElementById('rzp-button1').style.visibility='hidden';
         document.getElementById('premium').style.visibility='visible';
-        document.getElementById('ldrboard').style.visibility = 'visible';
-        document.getElementById('download').style.visibility='visible';
+        document.getElementById('ldrboard').style.visibility = 'visible'
+        document.getElementById('download').style.visibility='visible'
 
         alert("You are a premium user now")
         },
     };
+    
 
 
     //if transaction successful
@@ -126,10 +168,11 @@ document.getElementById('rzp-button1').onclick = async function(e){
     rzp1.open();
     e.preventDefault();
 
+
     //if transaction failed
     rzp1.on('payment.failed',async function (response){
         alert("payment failed try again later");
-        console.log("resssp => "+JSON.stringify(response.error.metadata))
+
         await axios.post('http://localhost:3000/purchase/checkout', {
             order_id: response.error.metadata.order_id,
             payment_id: response.error.metadata.payment_id,
@@ -137,42 +180,30 @@ document.getElementById('rzp-button1').onclick = async function(e){
     }, {headers:{"Authorization":token}})
     })
 }
+
+
 async function addExpense(e) {
     e.preventDefault();
     try{
-        const token = localStorage.getItem('token')
         if(amount.value==''||description.value=='') return false;
+
         let obj = {
             amount: amount.value,
             description: description.value,
-            category: category.value
-
+            category: category.value  
         };
-
-
         let exp = `${amount.value}  -  ${description.value}  -  ${category.value}`;
     
-
         const id= await axios.post('http://localhost:3000/', obj,{headers:{"Authorization":token}});
-        displayOnScreen(id.data, exp);
         displayOnExpense(id.data, obj);
     }
 
     catch(err){
         console.log(err.response);
     }
-
 }
 
 
-function displayOnScreen(id, expense) {
-    let p = `<li id="${id}" style="list-style:none;display:block;height:40px">${expense} <div style="float:right"> 
-            <button class="btn btn-secondary btn-sm" style="border-radius:20px; margin-right:10px" onClick="deleteExpense('${id}')">Delete Expense</button>
-            <button class="btn btn-secondary btn-sm" style="border-radius:20px" onClick = "editExpense('${id}')">Edit Expense</button>
-            <button class="btn btn-secondary btn-sm" style="border-radius:4px; margin-right:10px" onClick="deleteExpense('${id}')">Delete</button>
-            <button class="btn btn-secondary btn-sm" style="border-radius:4px" onClick = "editExpense('${id}')">Edit</button>
-            </div></li>`;
-    display.innerHTML = display.innerHTML + p;
 function displayOnExpense(id, expense) {
 
     let exp =`<tr id="${id}">
@@ -193,18 +224,17 @@ function displayOnLeaderBoard(user){
     </tr>`
     ldrBoardTable.innerHTML = ldrBoardTable.innerHTML + element;
 }
-
-
+ 
 function deleteExpense(id) {
     try{
         let elementToRemove = document.getElementById(id);
         elementToRemove.remove();
         return axios.get(`http://localhost:3000/delete/${id}`)
     }
+
     catch(err){
      console.log(err)
     }
-
 }
 
 
@@ -214,15 +244,13 @@ async function editExpense(id) {
         let amt = res.data.amount;
         let des = res.data.description;
         let cat = res.data.category;
+
         amount.value = amt,
         description.value = des,
         category.value = cat;
- 
-
     }
 
     catch(err){
         console.log(err);
     }
-}
 }
