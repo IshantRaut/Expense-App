@@ -10,11 +10,7 @@ const fs = require('fs');
 
 const sequelize = require('./util/database');
 
-app.use(cors());
-app.use(bodyParser.urlencoded({extended:false}));
-app.use(bodyParser.json());
-// app.use(morgan('combined',{stream:accessLogStream}));
-app.use(helmet());
+
 
 //Tables
 const usersTable= require('./models/user');
@@ -29,11 +25,18 @@ const expenseRoutes = require('./routes/expense');
 const purchaseRoutes = require('./routes/purchase');
 const premium = require('./routes/premium');
 const passwordReset = require('./routes/password');
+const accessLogStream = fs.createWriteStream(path.join(__dirname,'access.log'),{flags:'a'});
+
+app.use(cors());
+app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.json());
+app.use(morgan('combined',{stream:accessLogStream}));
+app.use(helmet());
 
 app.use(userRoutes);
 app.use(expenseRoutes);
-app.use('/purchase',purchaseRoutes);
 app.use('/premium',premium);
+app.use('/purchase',purchaseRoutes);
 app.use('/password',passwordReset);
 
 
@@ -46,6 +49,7 @@ usersTable.hasMany(passwordRequestTable);
 passwordRequestTable.belongsTo(usersTable);
 usersTable.hasMany(downloadTable);
 downloadTable.belongsTo(usersTable);
+
 sequelize.sync( ) 
 .then(result=>{
 

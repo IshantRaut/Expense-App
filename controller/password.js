@@ -84,7 +84,7 @@ exports.updatepassword = async(req, res, next)=>{
             }
             User.update({ password: hash },{where:{id:userId}})
             .then(() => {
-                res.status(201).json({message: 'Successfuly update the new password'})
+                res.status(201).json({message: 'Successfuly updated the new password'})
             })})
     }
 
